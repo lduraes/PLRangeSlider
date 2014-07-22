@@ -78,7 +78,7 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/lduraes/PLRangeSlider.git", :commit => "5a015ebbabd3af64bcfd948a031e8c7d2e38809b" }
+  s.source       = { :git => "https://github.com/lduraes/PLRangeSlider.git", :commit => "8c8199ee56ad6638d2f6c39e4f76f3452a203905" }
 
 
   # ――― Source Code ―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――― #
