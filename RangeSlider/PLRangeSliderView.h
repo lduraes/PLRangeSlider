@@ -32,5 +32,5 @@
 @property(strong, nonatomic) UIImage *slideHandleImageNormal;
 @property(strong, nonatomic) UIImage *slideHandleImageHighlighted;
 
-@property(weak, nonatomic) id<PLRangeSliderViewDelegate> delegate;
+@property(weak, nonatomic) IBOutlet id<PLRangeSliderViewDelegate> delegate;
 @end

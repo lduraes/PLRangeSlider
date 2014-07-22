@@ -14,8 +14,8 @@ typedef NS_ENUM(NSUInteger, RangeSliderSide) {
     RangeSliderSideRight
 };
 
-CGFloat const kSlideHandleWidth = 26;
-CGFloat const kSlideHandleHeight = 31;
+CGFloat const kSlideHandleWidth = 32;
+CGFloat const kSlideHandleHeight = 38;
 
 @interface PLRangeSliderView ()
 
@@ -38,7 +38,7 @@ CGFloat const kSlideHandleHeight = 31;
 }
 
 - (CGFloat)unitToOnePixel {
-    return self.maxValue / self.maxPixel;
+    return (self.maxValue - self.minValue) / self.maxPixel;
 }
 
 - (CGFloat)positionInPixelLeft {
@@ -88,8 +88,7 @@ CGFloat const kSlideHandleHeight = 31;
 
 - (id)initWithFrame:(CGRect)frame
 {
-    self = [super initWithFrame:frame];
-    if (self) {
+    if (self = [super initWithFrame:frame]) {
         [self __config];
     }
     return self;
@@ -97,8 +96,7 @@ CGFloat const kSlideHandleHeight = 31;
 
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
-    self = [super initWithCoder:coder];
-    if (self) {
+    if (self = [super initWithCoder:coder]) {
         [self __config];
     }
     return self;
@@ -283,10 +281,12 @@ CGFloat const kSlideHandleHeight = 31;
 
 - (void)setBounds:(CGRect)bounds {
     [super setBounds:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, kSlideHandleHeight)];
+    [self setNeedsDisplay];
 }
 
 - (void)setFrame:(CGRect)frame {
     [super setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, kSlideHandleHeight)];
+    [self setNeedsDisplay];
 }
 
 - (void)setMinValue:(CGFloat)minValue {
