@@ -78,10 +78,6 @@ CGFloat const kSlideHandleHeight = 31;
     self.right = self.maxValue = 10000000;
     self.lineHeight = 2;
     
-    CGRect frame = self.frame;
-    frame.size.height = kSlideHandleHeight;
-    self.frame = frame;
-    
     self.opaque = NO;
     self.selectedSide = RangeSliderSideNone;
     
@@ -285,9 +281,12 @@ CGFloat const kSlideHandleHeight = 31;
     [super setBackgroundColor:[UIColor clearColor]];
 }
 
+- (void)setBounds:(CGRect)bounds {
+    [super setBounds:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, kSlideHandleHeight)];
+}
+
 - (void)setFrame:(CGRect)frame {
-    frame.size.height = kSlideHandleHeight;
-    [super setFrame:frame];
+    [super setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, kSlideHandleHeight)];
 }
 
 - (void)setMinValue:(CGFloat)minValue {
