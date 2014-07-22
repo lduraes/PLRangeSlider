@@ -5,9 +5,23 @@
       "scale" : "1x"
     },
     {
+      "resizing" : {
+        "mode" : "9-part",
+        "center" : {
+          "mode" : "fill",
+          "width" : 1,
+          "height" : 1
+        },
+        "capInsets" : {
+          "bottom" : 23,
+          "top" : 22,
+          "right" : 23,
+          "left" : 22
+        }
+      },
       "idiom" : "universal",
-      "scale" : "2x",
-      "filename" : "slider-handle-highlighted@2x.png"
+      "filename" : "slider-handle-highlighted@2x.png",
+      "scale" : "2x"
     }
   ],
   "info" : {
