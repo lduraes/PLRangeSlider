@@ -8,7 +8,7 @@
 
 #import "PLViewController.h"
 #import "PLRangeSliderView.h"
- 
+
 @interface PLViewController () <PLRangeSliderViewDelegate>
 
 @property (weak, nonatomic) IBOutlet PLRangeSliderView *rangeSliderView;
@@ -22,17 +22,18 @@
 #pragma mark - Private
 
 -(void)updateLabel {
-    [self.leftValueLabel setText:@(self.rangeSliderView.left).stringValue];
-    [self.rightValueLabel setText:@(self.rangeSliderView.right).stringValue];
+    [self.leftValueLabel setText:@(self.rangeSliderView.selectedMininumValue).stringValue];
+    [self.rightValueLabel setText:@(self.rangeSliderView.selectedMaximumValue).stringValue];
 }
 
 -(void)loadRangeSliderConfig {
+    
     [self.rangeSliderView setLineHeight:1];
-    [self.rangeSliderView setMinValue:10];
-    [self.rangeSliderView setMaxValue:20];
-    [self.rangeSliderView setLeft:11];
-    [self.rangeSliderView setRight:18];
-
+    [self.rangeSliderView setMininumValue:10];
+    [self.rangeSliderView setMaximumValue:99999999];
+    [self.rangeSliderView setSelectedMininumValue:19999999];
+    [self.rangeSliderView setSelectedMaximumValue:79999999];
+    
     [self updateLabel];
 }
 
