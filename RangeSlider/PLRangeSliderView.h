@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @protocol PLRangeSliderViewDelegate <NSObject>
-
+ 
 @optional
 - (void)didChangeValueOnMove:(id)sender left:(CGFloat)left right:(CGFloat)right;
 - (void)didChangeValueOnUp:(id)sender left:(CGFloat)left right:(CGFloat)right;

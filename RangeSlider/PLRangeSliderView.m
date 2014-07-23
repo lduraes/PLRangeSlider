@@ -225,7 +225,7 @@ CGFloat const kSlideHandleHeight = 38;
     
     if([self.delegate respondsToSelector:@selector(didChangeValueOnMove: left: right:)]) {
         [self.delegate didChangeValueOnMove:self left:self.selectedMininumValue right:self.selectedMaximumValue];
-    }
+    } 
     
 }
 
