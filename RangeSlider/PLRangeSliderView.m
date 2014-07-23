@@ -38,16 +38,16 @@ CGFloat const kSlideHandleHeight = 38;
 }
 
 - (CGFloat)unitToOnePixel {
-    return (self.maxValue - self.minValue) / self.maxPixel;
+    return (self.maximumValue - self.mininumValue) / self.maxPixel;
 }
 
 - (CGFloat)positionInPixelLeft {
-    CGFloat fromLeft = self.left - self.minValue;
+    CGFloat fromLeft = self.selectedMininumValue - self.mininumValue;
     return fromLeft / self.unitToOnePixel;
 }
 
 - (CGFloat)positionInPixelRight {
-    CGFloat fromRight = self.right - self.minValue;
+    CGFloat fromRight = self.selectedMaximumValue - self.mininumValue;
     return fromRight / self.unitToOnePixel;
 }
 
@@ -71,13 +71,14 @@ CGFloat const kSlideHandleHeight = 38;
 
 - (void)__config {
     
-    self.slideHandleImageHighlighted = [UIImage imageNamed:@"slider-handle-highlighted"];
-    self.slideHandleImageNormal = [UIImage imageNamed:@"slider-handle"];
+//    self.slideHandleImageHighlighted = [UIImage imageNamed:@"slider-handle-highlighted"];
+//    self.slideHandleImageNormal = [UIImage imageNamed:@"slider-handle"];
 
-    self.left = self.minValue = 0;
-    self.right = self.maxValue = 10000000;
+    self.selectedMininumValue = self.mininumValue = 0;
+    self.selectedMaximumValue = self.maximumValue = 10000000;
     self.lineHeight = 2;
     
+    self.cancelGestureRecognizer = NO;
     self.opaque = NO;
     self.selectedSide = RangeSliderSideNone;
     
@@ -112,7 +113,7 @@ CGFloat const kSlideHandleHeight = 38;
     CGFloat middleSelf = (self.frame.size.height / 2.0);
     CGFloat middleLine = (self.lineHeight / 2.0);
     CGRect off = {1, middleSelf - middleLine, CGRectGetWidth(self.frame) - 2, self.lineHeight};
-    CGRect on = {leftPosition + 1, middleSelf - middleLine, diffLeftRightSize - 1, self.lineHeight};
+    CGRect on = {leftPosition + kSlideHandleWidth - 1, middleSelf - middleLine, diffLeftRightSize - kSlideHandleWidth + 2, self.lineHeight};
     
     [self.lineColorInactive setFill];
     UIRectFill(off);
@@ -152,7 +153,39 @@ CGFloat const kSlideHandleHeight = 38;
     
     CGRect drawImageRect = {position, 0, kSlideHandleWidth, kSlideHandleHeight};
     
-    [image drawInRect:drawImageRect];
+    if(image) {
+        [image drawInRect:drawImageRect];
+    }else{
+        [self drawCircleInRect:drawImageRect isHighlighted:highlighted];
+    }
+    
+}
+
+- (void)drawCircleInRect:(CGRect)rect isHighlighted:(BOOL)highlighted {
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+
+    if(highlighted) {
+        CGContextSetRGBFillColor(context, 154.0/255.0, 154.0/255.0, 154.0/255.0, 1.0);
+        CGContextSetRGBStrokeColor(context, 27.0/255.0, 155.0/255.0, 215.0/255.0, 1.0);
+    }else{
+        CGContextSetRGBFillColor(context, 184.0/255.0, 184.0/255.0, 184.0/255.0, 1.0);
+        CGContextSetRGBStrokeColor(context, 37.0/255.0, 165.0/255.0, 225.0/255.0, 1.0);
+    }
+    
+    CGFloat centerX = rect.origin.x + (rect.size.width / 2.0);
+    CGFloat centerY = rect.origin.y + (rect.size.height / 2.0);
+    
+    CGPoint center = CGPointMake(centerX, centerY);
+    CGFloat radius = (rect.size.width - 1)  / 2.0;
+    CGFloat startAngle = M_PI;
+    CGFloat endAngle = (2.0 * M_PI) + startAngle;
+    CGContextAddArc(context, center.x, center.y, radius, startAngle, endAngle, 0.0);
+    
+    CGContextDrawPath(context, kCGPathFill);
+    
+    CGContextAddArc(context, center.x, center.y, radius, startAngle, endAngle, 0.0);
+    CGContextDrawPath(context, kCGPathStroke);
     
 }
 
@@ -161,8 +194,8 @@ CGFloat const kSlideHandleHeight = 38;
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     
     self.touchBegin = [self pointFromEvent:event];
-    self.lastLeft = self.left;
-    self.lastRight = self.right;
+    self.lastLeft = self.selectedMininumValue;
+    self.lastRight = self.selectedMaximumValue;
     
     CGFloat leftFirstPixel = [self positionInPixelLeft];
     CGFloat rightFirstPixel = [self positionInPixelRight];
@@ -191,7 +224,7 @@ CGFloat const kSlideHandleHeight = 38;
     [self setNeedsDisplay];
     
     if([self.delegate respondsToSelector:@selector(didChangeValueOnMove: left: right:)]) {
-        [self.delegate didChangeValueOnMove:self left:self.left right:self.right];
+        [self.delegate didChangeValueOnMove:self left:self.selectedMininumValue right:self.selectedMaximumValue];
     }
     
 }
@@ -199,28 +232,28 @@ CGFloat const kSlideHandleHeight = 38;
 - (void)updatePosition:(CGFloat)updateValue {
     
     if(self.selectedSide == RangeSliderSideLeft) {
-    
-        self.left = self.lastLeft + updateValue;
+     
+        _selectedMininumValue = self.lastLeft + updateValue;
         
-        if(self.left < self.minValue) {
-            self.left = self.minValue;
-        }else if(self.left > self.maxValue) {
-            self.left = self.maxValue;
+        if(self.selectedMininumValue < self.mininumValue) {
+            _selectedMininumValue = self.mininumValue;
+        }else if(self.selectedMininumValue > self.maximumValue) {
+            _selectedMininumValue = self.maximumValue;
         }
         
-        if(self.left > self.right) {
+        if(self.selectedMininumValue > self.selectedMaximumValue) {
             
             //define temp vars
-            CGFloat tmpLeft = self.left;
-            CGFloat tmpRight = self.right;
+            CGFloat tmpLeft = self.selectedMininumValue;
+            CGFloat tmpRight = self.selectedMaximumValue;
             
             //get current diference
-            self.left = self.lastLeft;
+            _selectedMininumValue = self.lastLeft;
             CGFloat diffBegin = self.touchBegin.x - [self positionInPixelLeft];
             
             //Change current value
-            self.lastRight = self.right = tmpLeft;
-            self.lastLeft = self.left = tmpRight;
+            self.lastRight = self.selectedMaximumValue = tmpLeft;
+            self.lastLeft = self.selectedMininumValue = tmpRight;
             
             self.touchBegin = CGPointMake([self positionInPixelRight] + diffBegin, self.touchBegin.y);
             self.selectedSide = RangeSliderSideRight;
@@ -229,27 +262,27 @@ CGFloat const kSlideHandleHeight = 38;
         
     }else if(self.selectedSide == RangeSliderSideRight){
         
-        self.right = self.lastRight + updateValue;
+        _selectedMaximumValue = self.lastRight + updateValue;
         
-        if(self.right < self.minValue) {
-            self.right = self.minValue;
-        }else if(self.right > self.maxValue) {
-            self.right = self.maxValue;
+        if(self.selectedMaximumValue < self.mininumValue) {
+            _selectedMaximumValue = self.mininumValue;
+        }else if(self.selectedMaximumValue > self.maximumValue) {
+            _selectedMaximumValue = self.maximumValue;
         }
         
-        if(self.right < self.left) {
+        if(self.selectedMaximumValue < self.selectedMininumValue) {
 
             //define temp vars
-            CGFloat tmpLeft = self.left;
-            CGFloat tmpRight = self.right;
+            CGFloat tmpLeft = self.selectedMininumValue;
+            CGFloat tmpRight = self.selectedMaximumValue;
             
             //get current diference
-            self.right = self.lastRight;
+            _selectedMaximumValue = self.lastRight;
             CGFloat diffBegin = self.touchBegin.x - [self positionInPixelRight];
             
             //Change current value
-            self.lastRight = self.right = tmpLeft;
-            self.lastLeft = self.left = tmpRight;
+            self.lastRight = self.selectedMaximumValue = tmpLeft;
+            self.lastLeft = self.selectedMininumValue = tmpRight;
             
             self.touchBegin = CGPointMake([self positionInPixelLeft] + diffBegin, self.touchBegin.y);
             self.selectedSide = RangeSliderSideLeft;
@@ -268,12 +301,16 @@ CGFloat const kSlideHandleHeight = 38;
     [self setNeedsDisplay];
     
     if([self.delegate respondsToSelector:@selector(didChangeValueOnUp: left: right:)]) {
-        [self.delegate didChangeValueOnUp:self left:self.left right:self.right];
+        [self.delegate didChangeValueOnUp:self left:self.selectedMininumValue right:self.selectedMaximumValue];
     }
     
 }
 
 #pragma mark - Override
+
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    return !self.cancelGestureRecognizer;
+}
 
 - (void)setBackgroundColor:(UIColor *)backgroundColor {
     [super setBackgroundColor:[UIColor clearColor]];
@@ -289,35 +326,103 @@ CGFloat const kSlideHandleHeight = 38;
     [self setNeedsDisplay];
 }
 
-- (void)setMinValue:(CGFloat)minValue {
-    _minValue = minValue;
-    if(_minValue > self.maxValue) {
-        _minValue = self.maxValue;
+- (void)setMininumValue:(CGFloat)mininumValue {
+    
+    _mininumValue = mininumValue;
+    
+    if(_mininumValue > self.maximumValue) {
+        _mininumValue = self.maximumValue;
+    }else if(_mininumValue < 0) {
+        _mininumValue = 0;
     }
-    if(_minValue < 0) {
-        _minValue = 0;
-    }
+    
+    [self setSelectedMininumValue:self.selectedMininumValue];
+    
 }
 
-- (void)setMaxValue:(CGFloat)maxValue {
-    _maxValue = maxValue;
-    if(_maxValue < self.minValue) {
-        _maxValue = self.minValue;
+- (void)setMaximumValue:(CGFloat)maximumValue {
+    
+    _maximumValue = maximumValue;
+    
+    if(_maximumValue <= self.mininumValue) {
+        _maximumValue = self.mininumValue + 1.0;
     }
+    
+    [self setSelectedMaximumValue:self.selectedMaximumValue];
+    
 }
 
-- (void)setLeft:(CGFloat)left {
-    _left = left;
-    if(_left < self.minValue) {
-        _left = self.minValue;
+- (void)setSelectedMininumValue:(CGFloat)selectedMininumValue {
+    
+    _selectedMininumValue = selectedMininumValue;
+    
+    if(_selectedMininumValue < self.mininumValue) {
+        _selectedMininumValue = self.mininumValue;
+    }else if(_selectedMininumValue > self.selectedMaximumValue) {
+        _selectedMininumValue = self.selectedMaximumValue;
     }
+
+    [self setNeedsDisplay];
+
 }
 
-- (void)setRight:(CGFloat)right {
-    _right = right;
-    if(_right > self.maxValue) {
-        _right = self.maxValue;
+- (void)setSelectedMaximumValue:(CGFloat)selectedMaximumValue {
+    
+    _selectedMaximumValue = selectedMaximumValue;
+    
+    if(_selectedMaximumValue > self.maximumValue) {
+        _selectedMaximumValue = self.maximumValue;
+    }else if(_selectedMaximumValue < self.selectedMininumValue) {
+        _selectedMaximumValue = self.selectedMininumValue;
     }
+    
+    [self setNeedsDisplay];
+    
+}
+
+- (void)setSlideHandleImageHighlighted:(UIImage *)slideHandleImageHighlighted {
+    
+    if(_slideHandleImageHighlighted != slideHandleImageHighlighted) {
+        _slideHandleImageHighlighted = slideHandleImageHighlighted;
+        [self setNeedsDisplay];
+    }
+    
+}
+
+- (void)setSlideHandleImageNormal:(UIImage *)slideHandleImageNormal {
+    
+    if(_slideHandleImageNormal != slideHandleImageNormal) {
+        _slideHandleImageNormal = slideHandleImageNormal;
+        [self setNeedsDisplay];
+    }
+    
+}
+
+- (void)setLineHeight:(CGFloat)lineHeight {
+    
+    if(_lineHeight != lineHeight) {
+        _lineHeight = lineHeight < 0 ? 1 : lineHeight;
+        [self setNeedsDisplay];
+    }
+    
+}
+
+- (void)setLineColorActive:(UIColor *)lineColorActive {
+    
+    if(_lineColorActive != lineColorActive) {
+        _lineColorActive = lineColorActive;
+        [self setNeedsDisplay];
+    }
+    
+}
+
+- (void)setLineColorInactive:(UIColor *)lineColorInactive {
+    
+    if(_lineColorInactive != lineColorInactive) {
+        _lineColorInactive = lineColorInactive;
+        [self setNeedsDisplay];
+    }
+    
 }
 
 @end
