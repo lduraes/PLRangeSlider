@@ -5,36 +5,36 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>316A4BAF-7F66-45C8-9326-A93A743B7DB5</string>
+	<string>11C78443-220E-40EE-86B8-1F2E50C06A6C</string>
 	<key>IDESourceControlProjectName</key>
 	<string>RangeSlider</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
-		<key>7242B031-9B7E-4BD6-911A-8C2DA24AFA13</key>
-		<string>https://bitbucket.org/lduraes/plrangeslider.git</string>
+		<key>C4883A06-929A-4C4A-B916-0C59670C3E76</key>
+		<string>https://github.com/lduraes/PLRangeSlider.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>RangeSlider/RangeSlider.xcodeproj/project.xcworkspace</string>
+	<string>RangeSlider.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>7242B031-9B7E-4BD6-911A-8C2DA24AFA13</key>
-		<string>../../..</string>
+		<key>C4883A06-929A-4C4A-B916-0C59670C3E76</key>
+		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://bitbucket.org/lduraes/plrangeslider.git</string>
+	<string>https://github.com/lduraes/PLRangeSlider.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>110</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>7242B031-9B7E-4BD6-911A-8C2DA24AFA13</string>
+	<string>C4883A06-929A-4C4A-B916-0C59670C3E76</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
 			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>7242B031-9B7E-4BD6-911A-8C2DA24AFA13</string>
+			<string>C4883A06-929A-4C4A-B916-0C59670C3E76</string>
 			<key>IDESourceControlWCCName</key>
-			<string>plrangeslider</string>
+			<string>github-PLRangeSlider</string>
 		</dict>
 	</array>
 </dict>
