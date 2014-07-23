@@ -232,7 +232,7 @@ CGFloat const kSlideHandleHeight = 38;
 - (void)updatePosition:(CGFloat)updateValue {
     
     if(self.selectedSide == RangeSliderSideLeft) {
-    
+     
         _selectedMininumValue = self.lastLeft + updateValue;
         
         if(self.selectedMininumValue < self.mininumValue) {
