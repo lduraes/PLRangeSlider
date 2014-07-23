@@ -11,7 +11,6 @@ Pod::Spec.new do |s|
   s.social_media_url	= "http://twitter.com/ilduraes"
   s.platform     		= :ios, "6.0"
   s.source       		= {		:git => "https://github.com/lduraes/PLRangeSlider.git",
-  							  	:commit => "3e6f216efd1c1a0782856a1b3876438216c6c2ae",
   							  	:tag => "0.3.0"
   						   }
   s.source_files  		= "RangeSlider/PLRangeSliderView.{h,m}"
