@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+typedef NS_ENUM(NSUInteger, RangeSliderSide) {
+    RangeSliderSideNone,
+    RangeSliderSideLeft,
+    RangeSliderSideRight
+};
+
 @class PLRangeSliderView;
 
 @protocol PLRangeSliderViewDelegate <NSObject>
@@ -16,6 +22,7 @@
 
 - (void)didChangeValueOnMove:(PLRangeSliderView *)rangeSliderView selectedMinimumValue:(CGFloat)selectedMinimumValue selectedMaximumValue:(CGFloat)selectedMaximumValue;
 - (void)didChangeValueOnUp:(PLRangeSliderView *)rangeSliderView selectedMinimumValue:(CGFloat)selectedMinimumValue selectedMaximumValue:(CGFloat)selectedMaximumValue;
+- (void)didTouchUp:(PLRangeSliderView *)rangeSliderView touchedSide:(RangeSliderSide)side;
 
 @end
 

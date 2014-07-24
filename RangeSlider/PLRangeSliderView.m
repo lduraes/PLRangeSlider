@@ -8,12 +8,6 @@
 
 #import "PLRangeSliderView.h"
 
-typedef NS_ENUM(NSUInteger, RangeSliderSide) {
-    RangeSliderSideNone,
-    RangeSliderSideLeft,
-    RangeSliderSideRight
-};
-
 CGFloat const kSlideHandleWidth = 32;
 CGFloat const kSlideHandleHeight = 38;
 
@@ -24,6 +18,7 @@ CGFloat const kSlideHandleHeight = 38;
 @property(assign, nonatomic) RangeSliderSide lastSelectedSide;
 @property(assign, nonatomic) RangeSliderSide selectedSide;
 @property(assign, nonatomic) CGPoint touchBegin;
+@property(assign, nonatomic, getter = isMoved) BOOL moved;
 
 @end
 
@@ -134,8 +129,8 @@ CGFloat const kSlideHandleHeight = 38;
 
 - (void)config {
     
-    //    self.slideHandleImageHighlighted = [UIImage imageNamed:@"slider-handle-highlighted"];
-    //    self.slideHandleImageNormal = [UIImage imageNamed:@"slider-handle"];
+    self.slideHandleImageHighlighted = [UIImage imageNamed:@"slider-default7-handle"];
+    self.slideHandleImageNormal = [UIImage imageNamed:@"slider-default7"];
     
     self.selectedMinimumValue = self.minimumValue = 0;
     self.selectedMaximumValue = self.maximumValue = 10000000;
@@ -259,6 +254,7 @@ CGFloat const kSlideHandleHeight = 38;
     self.touchBegin = [self pointFromEvent:event];
     self.lastSelectedMinimumValue = self.selectedMinimumValue;
     self.lastSelectedMaximumValue = self.selectedMaximumValue;
+    self.moved = NO;
     
     CGFloat leftFirstPixel = [self positionInPixelLeft];
     CGFloat rightFirstPixel = [self positionInPixelRight];
@@ -280,8 +276,18 @@ CGFloat const kSlideHandleHeight = 38;
     
     [self setNeedsDisplay];
     
-    if([self.delegate respondsToSelector:@selector(didChangeValueOnUp:selectedMinimumValue:selectedMaximumValue:)]) {
-        [self.delegate didChangeValueOnUp:self selectedMinimumValue:self.selectedMinimumValue selectedMaximumValue:self.selectedMaximumValue];
+    if(self.isMoved) {
+        
+        if([self.delegate respondsToSelector:@selector(didChangeValueOnUp:selectedMinimumValue:selectedMaximumValue:)]) {
+            [self.delegate didChangeValueOnUp:self selectedMinimumValue:self.selectedMinimumValue selectedMaximumValue:self.selectedMaximumValue];
+        }
+        
+    }else{
+        
+        if([self.delegate respondsToSelector:@selector(didTouchUp:touchedSide:)]) {
+            [self.delegate didTouchUp:self touchedSide:self.lastSelectedSide];
+        }
+        
     }
     
 }
@@ -289,6 +295,8 @@ CGFloat const kSlideHandleHeight = 38;
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     
     if(self.selectedSide == RangeSliderSideNone) return;
+    
+    self.moved = YES;
     
     CGPoint moved  = [self pointFromEvent:event];
     CGFloat dif = moved.x - self.touchBegin.x;

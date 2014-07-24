@@ -22,16 +22,16 @@
 #pragma mark - Private
 
 -(void)updateLabel {
-    [self.leftValueLabel setText:@(self.rangeSliderView.selectedMininumValue).stringValue];
+    [self.leftValueLabel setText:@(self.rangeSliderView.selectedMinimumValue).stringValue];
     [self.rightValueLabel setText:@(self.rangeSliderView.selectedMaximumValue).stringValue];
 }
 
 -(void)loadRangeSliderConfig {
     
     [self.rangeSliderView setLineHeight:1];
-    [self.rangeSliderView setMininumValue:10];
+    [self.rangeSliderView setMinimumValue:10];
     [self.rangeSliderView setMaximumValue:99999999];
-    [self.rangeSliderView setSelectedMininumValue:19999999];
+    [self.rangeSliderView setSelectedMinimumValue:19999999];
     [self.rangeSliderView setSelectedMaximumValue:79999999];
     
     [self updateLabel];
@@ -46,14 +46,16 @@
 
 #pragma mark - PLRangeSliderViewDelegate
 
--(void)didChangeValueOnMove:(id)sender left:(CGFloat)left right:(CGFloat)right {
-    //NSLog(@"didChangeValueOnMove :: left >> %2f && right >> %2f", left, right);
+- (void)didChangeValueOnMove:(PLRangeSliderView *)rangeSliderView selectedMinimumValue:(CGFloat)selectedMinimumValue selectedMaximumValue:(CGFloat)selectedMaximumValue {
     [self updateLabel];
 }
 
--(void)didChangeValueOnUp:(id)sender left:(CGFloat)left right:(CGFloat)right {
-    //NSLog(@"didChangeValueOnUp :: left >> %2f && right >> %2f", left, right);
+- (void)didChangeValueOnUp:(PLRangeSliderView *)rangeSliderView selectedMinimumValue:(CGFloat)selectedMinimumValue selectedMaximumValue:(CGFloat)selectedMaximumValue {
     [self updateLabel];
+}
+
+- (void)didTouchUp:(PLRangeSliderView *)rangeSliderView touchedSide:(RangeSliderSide)side {
+    NSLog(@"didTouchUp >> %lu", side);
 }
 
 @end
