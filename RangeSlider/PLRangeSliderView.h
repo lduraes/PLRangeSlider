@@ -23,6 +23,11 @@ typedef NS_ENUM(NSUInteger, RangeSliderSide) {
  */
 @property(assign, nonatomic) BOOL cancelGestureRecognizer;
 
+/**
+ *  Default is NO
+ */
+@property(assign, nonatomic) BOOL singleRange;
+
 @property(strong, nonatomic) UIColor *lineColorActive;
 @property(strong, nonatomic) UIColor *lineColorInactive;
 

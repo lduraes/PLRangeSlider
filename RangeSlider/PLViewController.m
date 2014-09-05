@@ -24,9 +24,12 @@
 -(void)updateLabel {
     [self.leftValueLabel setText:@(self.rangeSliderView.selectedMinimumValue).stringValue];
     [self.rightValueLabel setText:@(self.rangeSliderView.selectedMaximumValue).stringValue];
+    
 }
 
 -(void)loadRangeSliderConfig {
+    
+//    self.rangeSliderView.singleRange = YES;
     
     [self.rangeSliderView setLineHeight:1];
     [self.rangeSliderView setMinimumValue:10];

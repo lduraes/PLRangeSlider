@@ -71,7 +71,7 @@
 
 - (void)updatePosition:(CGFloat)updateValue {
     
-    if(self.selectedSide == RangeSliderSideLeft) {
+    if(self.selectedSide == RangeSliderSideLeft || self.singleRange) {
         
         _selectedMinimumValue = self.lastSelectedMinimumValue + updateValue;
         
@@ -81,7 +81,7 @@
             _selectedMinimumValue = self.maximumValue;
         }
         
-        if(self.selectedMinimumValue > self.selectedMaximumValue) {
+        if(self.selectedMinimumValue > self.selectedMaximumValue && !self.singleRange) {
             
             //define temp vars
             CGFloat tmpLeft = self.selectedMinimumValue;
@@ -96,8 +96,12 @@
             self.lastSelectedMinimumValue = self.selectedMinimumValue = tmpRight;
             
             self.touchBegin = CGPointMake([self positionInPixelRight] + diffBegin, self.touchBegin.y);
-            self.selectedSide = RangeSliderSideRight;
+            self.selectedSide = _lastSelectedSide = RangeSliderSideRight;
             
+        }
+        
+        if(self.singleRange) {
+            _selectedMaximumValue = self.selectedMinimumValue;
         }
         
     }else if(self.selectedSide == RangeSliderSideRight){
@@ -125,7 +129,7 @@
             self.lastSelectedMinimumValue = self.selectedMinimumValue = tmpRight;
             
             self.touchBegin = CGPointMake([self positionInPixelLeft] + diffBegin, self.touchBegin.y);
-            self.selectedSide = RangeSliderSideLeft;
+            self.selectedSide = _lastSelectedSide = RangeSliderSideLeft;
             
         }
         
@@ -262,19 +266,35 @@
     UIRectFill(on);
     
     if(self.selectedSide == RangeSliderSideLeft) {
-        [self drawImageWithPosition:[self positionInPixelRight] isHighlighted:NO];
+        
+        if(!self.singleRange)
+            [self drawImageWithPosition:[self positionInPixelRight] isHighlighted:NO];
+        
         [self drawImageWithPosition:[self positionInPixelLeft] isHighlighted:YES];
+        
     }else if(self.selectedSide == RangeSliderSideRight){
+        
         [self drawImageWithPosition:[self positionInPixelLeft] isHighlighted:NO];
-        [self drawImageWithPosition:[self positionInPixelRight] isHighlighted:YES];
+        
+        if(!self.singleRange)
+            [self drawImageWithPosition:[self positionInPixelRight] isHighlighted:YES];
+        
     }else{
         
         if(self.lastSelectedSide == RangeSliderSideLeft) {
-            [self drawImageWithPosition:[self positionInPixelRight] isHighlighted:NO];
+            
+            if(!self.singleRange)
+                [self drawImageWithPosition:[self positionInPixelRight] isHighlighted:NO];
+            
             [self drawImageWithPosition:[self positionInPixelLeft] isHighlighted:NO];
+        
         }else{
+            
             [self drawImageWithPosition:[self positionInPixelLeft] isHighlighted:NO];
-            [self drawImageWithPosition:[self positionInPixelRight] isHighlighted:NO];
+            
+            if(!self.singleRange)
+                [self drawImageWithPosition:[self positionInPixelRight] isHighlighted:NO];
+        
         }
         
     }
@@ -295,7 +315,7 @@
     
     if(CGRectContainsPoint(CGRectMake(leftFirstPixel, 0, self.slideHandleWidth, self.slideHandleHeight), self.touchBegin)) {
         self.selectedSide = _lastSelectedSide = RangeSliderSideLeft;
-    }else if(CGRectContainsPoint(CGRectMake(rightFirstPixel, 0, self.slideHandleWidth, self.slideHandleHeight), self.touchBegin)) {
+    }else if(CGRectContainsPoint(CGRectMake(rightFirstPixel, 0, self.slideHandleWidth, self.slideHandleHeight), self.touchBegin) && !self.singleRange) {
         self.selectedSide = _lastSelectedSide = RangeSliderSideRight;
     }else{
         _lastSelectedSide = RangeSliderSideNone;
