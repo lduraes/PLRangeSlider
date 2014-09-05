@@ -18,14 +18,16 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NGF-Pq-Ec1" customClass="PLRangeSliderView">
-                                <rect key="frame" x="20" y="142" width="280" height="31"/>
+                                <rect key="frame" x="20" y="142" width="280" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="31" id="dqF-8I-b6r"/>
+                                    <constraint firstAttribute="height" constant="30" id="dqF-8I-b6r"/>
                                 </constraints>
                                 <connections>
-                                    <outlet property="delegate" destination="vXZ-lx-hvc" id="cVP-p0-Mw2"/>
+                                    <action selector="actionChanged:" destination="vXZ-lx-hvc" eventType="valueChanged" id="qdr-eo-2WR"/>
+                                    <action selector="actionTouchDown:" destination="vXZ-lx-hvc" eventType="touchDown" id="NpN-9x-qHL"/>
+                                    <action selector="actionTouchUp:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="eG8-cc-GkQ"/>
                                 </connections>
                             </view>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Left" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u1K-sK-2hR">

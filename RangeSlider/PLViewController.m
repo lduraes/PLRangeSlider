@@ -9,7 +9,7 @@
 #import "PLViewController.h"
 #import "PLRangeSliderView.h"
 
-@interface PLViewController () <PLRangeSliderViewDelegate>
+@interface PLViewController ()
 
 @property (weak, nonatomic) IBOutlet PLRangeSliderView *rangeSliderView;
 @property (weak, nonatomic) IBOutlet UILabel *leftValueLabel;
@@ -34,6 +34,15 @@
     [self.rangeSliderView setSelectedMinimumValue:19999999];
     [self.rangeSliderView setSelectedMaximumValue:79999999];
     
+    self.rangeSliderView.circleColorActive =
+    self.rangeSliderView.circleColorInactive =
+    self.rangeSliderView.circleBorderColorActive =
+    self.rangeSliderView.circleBorderColorInactive =
+    self.rangeSliderView.lineColorActive =
+    [UIColor colorWithRed:10./255. green:98./255. blue:195./255. alpha:1.0];
+    
+    self.rangeSliderView.lineHeight = 2.;
+    
     [self updateLabel];
 }
 
@@ -46,16 +55,20 @@
 
 #pragma mark - PLRangeSliderViewDelegate
 
-- (void)didChangeValueOnMove:(PLRangeSliderView *)rangeSliderView selectedMinimumValue:(CGFloat)selectedMinimumValue selectedMaximumValue:(CGFloat)selectedMaximumValue {
+- (IBAction)actionTouchDown:(PLRangeSliderView *)rangeSliderView {
+    NSLog(@"action touch down");
+}
+
+- (IBAction)actionChanged:(PLRangeSliderView *)rangeSliderView {
     [self updateLabel];
 }
 
-- (void)didChangeValueOnUp:(PLRangeSliderView *)rangeSliderView selectedMinimumValue:(CGFloat)selectedMinimumValue selectedMaximumValue:(CGFloat)selectedMaximumValue {
-    [self updateLabel];
-}
-
-- (void)didTouchUp:(PLRangeSliderView *)rangeSliderView touchedSide:(RangeSliderSide)side {
-    NSLog(@"didTouchUp >> %lu", side);
+- (IBAction)actionTouchUp:(PLRangeSliderView *)rangeSliderView {
+    if(rangeSliderView.isMoved) {
+        NSLog(@"was moved >> %ld", rangeSliderView.lastSelectedSide);
+    }else{
+        NSLog(@"was not moved >> %ld", rangeSliderView.lastSelectedSide);
+    }
 }
 
 @end

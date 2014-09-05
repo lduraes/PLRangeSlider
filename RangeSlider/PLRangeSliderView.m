@@ -8,8 +8,8 @@
 
 #import "PLRangeSliderView.h"
 
-CGFloat const kSlideHandleWidth = 32;
-CGFloat const kSlideHandleHeight = 38;
+//CGFloat const kSlideHandleWidth = 32;
+//CGFloat const kSlideHandleHeight = 38;
 
 @interface PLRangeSliderView ()
 
@@ -18,13 +18,21 @@ CGFloat const kSlideHandleHeight = 38;
 @property(assign, nonatomic) RangeSliderSide lastSelectedSide;
 @property(assign, nonatomic) RangeSliderSide selectedSide;
 @property(assign, nonatomic) CGPoint touchBegin;
-@property(assign, nonatomic, getter = isMoved) BOOL moved;
+
+@property(assign, nonatomic) CGFloat slideHandleWidth;
+@property(assign, nonatomic) CGFloat slideHandleHeight;
 
 @end
 
 @implementation PLRangeSliderView
 
 #pragma mark - Private
+
+- (void)updateCircle {
+    self.slideHandleWidth = self.frame.size.height - 6.0;
+    self.slideHandleHeight = self.frame.size.height;
+    [self setNeedsDisplay];
+}
 
 - (CGFloat)currentInPixel {
     
@@ -39,7 +47,7 @@ CGFloat const kSlideHandleHeight = 38;
 }
 
 - (CGFloat)maxPixel {
-    return self.frame.size.width - kSlideHandleWidth;
+    return self.frame.size.width - self.slideHandleWidth;
 }
 
 - (CGPoint)pointFromEvent:(UIEvent *)event {
@@ -127,10 +135,11 @@ CGFloat const kSlideHandleHeight = 38;
 
 #pragma mark - Init
 
+- (void)awakeFromNib {
+    [self updateCircle];
+}
+
 - (void)config {
-    
-    self.slideHandleImageHighlighted = [UIImage imageNamed:@"slider-default7-handle"];
-    self.slideHandleImageNormal = [UIImage imageNamed:@"slider-default7"];
     
     self.selectedMinimumValue = self.minimumValue = 0;
     self.selectedMaximumValue = self.maximumValue = 10000000;
@@ -138,11 +147,13 @@ CGFloat const kSlideHandleHeight = 38;
     
     self.cancelGestureRecognizer = NO;
     self.opaque = NO;
-    self.selectedSide = RangeSliderSideNone;
+    self.selectedSide = _lastSelectedSide = RangeSliderSideNone;
     
     self.lineColorActive = [UIColor colorWithRed:37.0/255.0 green:165.0/255.0 blue:225.0/255.0 alpha:1.0];
     self.lineColorInactive = [UIColor colorWithRed:184.0/255.0 green:184.0/255.0 blue:184.0/255.0 alpha:1.0];
     
+    [self updateCircle];
+
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -168,11 +179,33 @@ CGFloat const kSlideHandleHeight = 38;
     CGContextRef context = UIGraphicsGetCurrentContext();
     
     if(highlighted) {
-        CGContextSetRGBFillColor(context, 154.0/255.0, 154.0/255.0, 154.0/255.0, 1.0);
-        CGContextSetRGBStrokeColor(context, 27.0/255.0, 155.0/255.0, 215.0/255.0, 1.0);
+        
+        if(self.circleColorActive) {
+            CGContextSetFillColorWithColor(context, self.circleColorActive.CGColor);
+        }else{
+            CGContextSetRGBFillColor(context, 154.0/255.0, 154.0/255.0, 154.0/255.0, 1.0);
+        }
+        
+        if(self.circleBorderColorActive) {
+            CGContextSetStrokeColorWithColor(context, self.circleBorderColorActive.CGColor);
+        }else{
+            CGContextSetRGBStrokeColor(context, 27.0/255.0, 155.0/255.0, 215.0/255.0, 1.0);
+        }
+        
     }else{
-        CGContextSetRGBFillColor(context, 184.0/255.0, 184.0/255.0, 184.0/255.0, 1.0);
-        CGContextSetRGBStrokeColor(context, 37.0/255.0, 165.0/255.0, 225.0/255.0, 1.0);
+        
+        if(self.circleColorInactive) {
+            CGContextSetFillColorWithColor(context, self.circleColorInactive.CGColor);
+        }else{
+            CGContextSetRGBFillColor(context, 184.0/255.0, 184.0/255.0, 184.0/255.0, 1.0);
+        }
+        
+        if(self.circleBorderColorInactive) {
+            CGContextSetStrokeColorWithColor(context, self.circleBorderColorInactive.CGColor);
+        }else{
+            CGContextSetRGBStrokeColor(context, 37.0/255.0, 165.0/255.0, 225.0/255.0, 1.0);
+        }
+        
     }
     
     CGFloat centerX = rect.origin.x + (rect.size.width / 2.0);
@@ -201,7 +234,8 @@ CGFloat const kSlideHandleHeight = 38;
         image = self.slideHandleImageNormal;
     }
     
-    CGRect drawImageRect = {position, 0, kSlideHandleWidth, kSlideHandleHeight};
+//    CGRect drawImageRect = {position, 0, kSlideHandleWidth, kSlideHandleHeight};
+    CGRect drawImageRect = {position, 0, self.slideHandleWidth, self.slideHandleHeight};
     
     if(image) {
         [image drawInRect:drawImageRect];
@@ -216,10 +250,10 @@ CGFloat const kSlideHandleHeight = 38;
     CGFloat leftPosition = [self positionInPixelLeft];
     CGFloat diffLeftRightSize = [self positionInPixelRight] - leftPosition;
     
-    CGFloat middleSelf = (self.frame.size.height / 2.0);
+    CGFloat middleSelf = (rect.size.height / 2.0);
     CGFloat middleLine = (self.lineHeight / 2.0);
     CGRect off = {1, middleSelf - middleLine, CGRectGetWidth(self.frame) - 2, self.lineHeight};
-    CGRect on = {leftPosition + kSlideHandleWidth - 1, middleSelf - middleLine, diffLeftRightSize - kSlideHandleWidth + 2, self.lineHeight};
+    CGRect on = {leftPosition + self.slideHandleWidth - 1, middleSelf - middleLine, diffLeftRightSize - self.slideHandleWidth + 2, self.lineHeight};
     
     [self.lineColorInactive setFill];
     UIRectFill(off);
@@ -254,18 +288,22 @@ CGFloat const kSlideHandleHeight = 38;
     self.touchBegin = [self pointFromEvent:event];
     self.lastSelectedMinimumValue = self.selectedMinimumValue;
     self.lastSelectedMaximumValue = self.selectedMaximumValue;
-    self.moved = NO;
+    _moved = NO;
     
     CGFloat leftFirstPixel = [self positionInPixelLeft];
     CGFloat rightFirstPixel = [self positionInPixelRight];
     
-    if(CGRectContainsPoint(CGRectMake(leftFirstPixel, 0, kSlideHandleWidth, kSlideHandleHeight), self.touchBegin)) {
-        self.selectedSide = RangeSliderSideLeft;
-    }else if(CGRectContainsPoint(CGRectMake(rightFirstPixel, 0, kSlideHandleWidth, kSlideHandleHeight), self.touchBegin)) {
-        self.selectedSide = RangeSliderSideRight;
+    if(CGRectContainsPoint(CGRectMake(leftFirstPixel, 0, self.slideHandleWidth, self.slideHandleHeight), self.touchBegin)) {
+        self.selectedSide = _lastSelectedSide = RangeSliderSideLeft;
+    }else if(CGRectContainsPoint(CGRectMake(rightFirstPixel, 0, self.slideHandleWidth, self.slideHandleHeight), self.touchBegin)) {
+        self.selectedSide = _lastSelectedSide = RangeSliderSideRight;
+    }else{
+        _lastSelectedSide = RangeSliderSideNone;
     }
     
     [self setNeedsDisplay];
+    
+    [self sendActionsForControlEvents:UIControlEventTouchDown];
     
 }
 
@@ -276,19 +314,7 @@ CGFloat const kSlideHandleHeight = 38;
     
     [self setNeedsDisplay];
     
-    if(self.isMoved) {
-        
-        if([self.delegate respondsToSelector:@selector(didChangeValueOnUp:selectedMinimumValue:selectedMaximumValue:)]) {
-            [self.delegate didChangeValueOnUp:self selectedMinimumValue:self.selectedMinimumValue selectedMaximumValue:self.selectedMaximumValue];
-        }
-        
-    }else{
-        
-        if([self.delegate respondsToSelector:@selector(didTouchUp:touchedSide:)]) {
-            [self.delegate didTouchUp:self touchedSide:self.lastSelectedSide];
-        }
-        
-    }
+    [self sendActionsForControlEvents:UIControlEventTouchUpInside];
     
 }
 
@@ -296,7 +322,7 @@ CGFloat const kSlideHandleHeight = 38;
     
     if(self.selectedSide == RangeSliderSideNone) return;
     
-    self.moved = YES;
+    _moved = YES;
     
     CGPoint moved  = [self pointFromEvent:event];
     CGFloat dif = moved.x - self.touchBegin.x;
@@ -307,9 +333,7 @@ CGFloat const kSlideHandleHeight = 38;
     
     [self setNeedsDisplay];
     
-    if([self.delegate respondsToSelector:@selector(didChangeValueOnMove:selectedMinimumValue:selectedMaximumValue:)]) {
-        [self.delegate didChangeValueOnMove:self selectedMinimumValue:self.selectedMinimumValue selectedMaximumValue:self.selectedMaximumValue];
-    }
+    [self sendActionsForControlEvents:UIControlEventValueChanged];
     
 }
 
@@ -324,13 +348,41 @@ CGFloat const kSlideHandleHeight = 38;
 }
 
 - (void)setBounds:(CGRect)bounds {
-    [super setBounds:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, kSlideHandleHeight)];
-    [self setNeedsDisplay];
+    [super setBounds:bounds];
+//    [self updateCircle];
 }
 
 - (void)setFrame:(CGRect)frame {
-    [super setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, kSlideHandleHeight)];
-    [self setNeedsDisplay];
+    [super setFrame:frame];
+    [self updateCircle];
+}
+
+- (void)setCircleBorderColorActive:(UIColor *)circleBorderColorActive {
+    if(_circleBorderColorActive != circleBorderColorActive) {
+        _circleBorderColorActive = circleBorderColorActive;
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setCircleBorderColorInactive:(UIColor *)circleBorderColorInactive {
+    if(_circleBorderColorInactive != circleBorderColorInactive) {
+        _circleBorderColorInactive = circleBorderColorInactive;
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setCircleColorActive:(UIColor *)circleColorActive {
+    if(_circleColorActive != circleColorActive) {
+        _circleColorActive = circleColorActive;
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setCircleColorInactive:(UIColor *)circleColorInactive {
+    if(_circleColorInactive != circleColorInactive) {
+        _circleColorInactive = circleColorInactive;
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)setLineColorActive:(UIColor *)lineColorActive {

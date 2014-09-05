@@ -16,16 +16,6 @@ typedef NS_ENUM(NSUInteger, RangeSliderSide) {
 
 @class PLRangeSliderView;
 
-@protocol PLRangeSliderViewDelegate <NSObject>
-
-@optional
-
-- (void)didChangeValueOnMove:(PLRangeSliderView *)rangeSliderView selectedMinimumValue:(CGFloat)selectedMinimumValue selectedMaximumValue:(CGFloat)selectedMaximumValue;
-- (void)didChangeValueOnUp:(PLRangeSliderView *)rangeSliderView selectedMinimumValue:(CGFloat)selectedMinimumValue selectedMaximumValue:(CGFloat)selectedMaximumValue;
-- (void)didTouchUp:(PLRangeSliderView *)rangeSliderView touchedSide:(RangeSliderSide)side;
-
-@end
-
 @interface PLRangeSliderView : UIControl
 
 /**
@@ -33,10 +23,17 @@ typedef NS_ENUM(NSUInteger, RangeSliderSide) {
  */
 @property(assign, nonatomic) BOOL cancelGestureRecognizer;
 
-@property(weak, nonatomic) IBOutlet id<PLRangeSliderViewDelegate> delegate;
-
 @property(strong, nonatomic) UIColor *lineColorActive;
 @property(strong, nonatomic) UIColor *lineColorInactive;
+
+@property(strong, nonatomic) UIColor *circleColorActive;
+@property(strong, nonatomic) UIColor *circleColorInactive;
+
+@property(strong, nonatomic) UIColor *circleBorderColorActive;
+@property(strong, nonatomic) UIColor *circleBorderColorInactive;
+
+@property(strong, nonatomic) UIImage *slideHandleImageNormal;
+@property(strong, nonatomic) UIImage *slideHandleImageHighlighted;
 
 @property(assign, nonatomic) CGFloat lineHeight;
 
@@ -46,7 +43,7 @@ typedef NS_ENUM(NSUInteger, RangeSliderSide) {
 @property(assign, nonatomic) CGFloat selectedMaximumValue;
 @property(assign, nonatomic) CGFloat selectedMinimumValue;
 
-@property(strong, nonatomic) UIImage *slideHandleImageNormal;
-@property(strong, nonatomic) UIImage *slideHandleImageHighlighted;
+@property(assign, nonatomic, getter = isMoved, readonly) BOOL moved;
+@property(assign, nonatomic, readonly) RangeSliderSide lastSelectedSide;
 
 @end
